@@ -1,0 +1,6 @@
+<svg width="1280" height="256" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0)">
+        <path fill="#0C7A5B" d="M0 0h1280v256H0z"/>
+        <text>Hello World</text>
+    </g>
+</svg>
