@@ -21,12 +21,12 @@ class ImageService: ObservableObject {
 
     func fetchImage() {
         DispatchQueue.global().async { [weak self] in
-            let decoder = SVGDecoder()
-            // decoder.isDebugMode = true
-            let url = Bundle.main.url(forResource: "image", withExtension: "svg")!
-            let data = try! Data(contentsOf: url)
-
             do {
+                let url = Bundle.main.url(forResource: "image", withExtension: "svg")!
+                let data = try Data(contentsOf: url)
+
+                let decoder = SVGDecoder()
+                // decoder.isDebugMode = true
                 let svg = try decoder.decode(data: data)
 
                 let encoder = SVGEncoder()
