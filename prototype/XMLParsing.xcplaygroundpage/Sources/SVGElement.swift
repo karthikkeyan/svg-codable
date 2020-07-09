@@ -5,9 +5,7 @@ public protocol SVGElement {
 }
 
 public struct SVG: SVGElement {
-    func applyAttributes(_ attributes: [String: String]) {
-        
-    }
+    func applyAttributes(_: [String: String]) {}
 }
 
 public struct SVGElementFactory {

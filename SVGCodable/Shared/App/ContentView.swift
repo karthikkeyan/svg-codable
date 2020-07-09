@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    
     @ObservedObject var service = ImageService()
-    
+
     var body: some View {
         ScrollView {
             VStack {

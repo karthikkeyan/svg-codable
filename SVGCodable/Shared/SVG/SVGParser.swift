@@ -15,16 +15,16 @@ public enum SVGDecodingError: Error {
 
 public class SVGParser: XMLParser {
     public var decodingError: SVGDecodingError?
-    
-    public override var parserError: Error? {
+
+    override public var parserError: Error? {
         if let error = super.parserError {
             return error
         }
-        
+
         if let error = decodingError {
             return error
         }
-        
+
         return nil
     }
 }

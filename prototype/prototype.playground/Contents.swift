@@ -4,28 +4,28 @@ import Foundation
 
 struct Stack {
     private var storage: [SVGElement] = []
-    
+
     var isEmpty: Bool {
         return storage.isEmpty
     }
-    
+
     var count: Int {
         return storage.count
     }
-    
+
     mutating func push(_ element: SVGElement) {
         storage.append(element)
     }
-    
+
     @discardableResult
     mutating func pop() -> SVGElement? {
         return storage.removeLast()
     }
-    
+
     func peek() -> SVGElement? {
         return storage.last
     }
-    
+
     mutating func clear() {
         storage = []
     }
@@ -39,16 +39,16 @@ public enum SVGDecodingError: Error {
 
 class SVGParser: XMLParser {
     var decodingError: SVGDecodingError?
-    
+
     override var parserError: Error? {
         if let error = super.parserError {
             return error
         }
-        
+
         if let error = decodingError {
             return error
         }
-        
+
         return nil
     }
 }
@@ -59,9 +59,9 @@ public class SVGDecoder: NSObject, XMLParserDelegate {
     private lazy var root: SVG = .empty
     private var foundCharacters: String?
     private var parser: SVGParser?
-    
+
     public var isDebugMode: Bool = false
-    
+
     public func decode(data: Data) throws -> SVG {
         iterationStack.clear()
         foundCharacters = nil
@@ -69,24 +69,24 @@ public class SVGDecoder: NSObject, XMLParserDelegate {
 
         parser = SVGParser(data: data)
         parser?.delegate = self
-        
+
         guard let isParsed = parser?.parse(), isParsed else {
             throw parser?.parserError ?? SVGDecodingError.decodeFailed
         }
-        
+
         return root
     }
-    
-    public func parser(_ parser: XMLParser,
-                didStartElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?,
-                attributes attributeDict: [String : String] = [:]) {
+
+    public func parser(_: XMLParser,
+                       didStartElement elementName: String,
+                       namespaceURI _: String?,
+                       qualifiedName _: String?,
+                       attributes attributeDict: [String: String] = [:]) {
         guard let element = elementFactory.elementForTagName(elementName) else {
             throwError(.invalidElement)
             return
         }
-        
+
         if let svg = element as? SVG {
             if iterationStack.isEmpty {
                 root = svg
@@ -95,33 +95,33 @@ public class SVGDecoder: NSObject, XMLParserDelegate {
                 return
             }
         }
-        
+
         let parent = iterationStack.peek()
         parent?.children.append(element)
-        
+
         element.parent = parent
         element.attributes = attributeDict
         iterationStack.push(element)
-        
+
         if isDebugMode {
             let attributes = attributeDict.reduce("") {
-                $0 + ($0.isEmpty ? "" :  " ") + $1.key + "=" + $1.value
+                $0 + ($0.isEmpty ? "" : " ") + $1.key + "=" + $1.value
             }
             print("\n<\(elementName)\(attributes.isEmpty ? "" : " ")\(attributes)>")
         }
-        
+
         foundCharacters = nil
     }
-    
-    public func parser(_ parser: XMLParser,
-                didEndElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?) {
+
+    public func parser(_: XMLParser,
+                       didEndElement elementName: String,
+                       namespaceURI _: String?,
+                       qualifiedName _: String?) {
         let trimmed = foundCharacters?.trimmingCharacters(in: .whitespacesAndNewlines)
         iterationStack.pop()?.value = trimmed
 
         foundCharacters = nil
-        
+
         if isDebugMode {
             if let _trimmed = trimmed, !_trimmed.isEmpty {
                 print(_trimmed)
@@ -129,16 +129,16 @@ public class SVGDecoder: NSObject, XMLParserDelegate {
             print("</" + elementName + ">", "\n")
         }
     }
-    
-    public func parser(_ parser: XMLParser,
-                        foundCharacters string: String) {
+
+    public func parser(_: XMLParser,
+                       foundCharacters string: String) {
         if foundCharacters == nil {
             foundCharacters = ""
         }
 
         foundCharacters?.append(string)
     }
-    
+
     private func throwError(_ error: SVGDecodingError) {
         parser?.decodingError = error
         parser?.abortParsing()
@@ -152,7 +152,7 @@ let data = try! Data(contentsOf: url)
 
 do {
     let svg = try decoder.decode(data: data)
-    
+
     let encoder = SVGEncoder()
     print(encoder.encode(svg))
 } catch {
