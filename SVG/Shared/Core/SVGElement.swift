@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class SVGElement: SVGElementCodable {
+open class SVGElement: SVGCodable {
     open var elementName: String
     open var value: String?
     open var attributes: [String: String] = [:]
@@ -40,26 +40,6 @@ open class SVGElement: SVGElementCodable {
         return svg
     }
 }
-
-public class SVG: SVGElement {
-    public static var empty: SVG { SVG() }
-
-    public lazy var definitions: Definitions? = {
-        children.first(where: { $0.elementName == "defs" }) as? Definitions
-    }()
-}
-
-public class Group: SVGElement {}
-
-public class Path: SVGElement {}
-
-public class Text: SVGElement {}
-
-public class ClipPath: SVGElement {}
-
-public class LinearGradient: SVGElement {}
-
-public class Stop: SVGElement {}
 
 public class Definitions: SVGElement {
     private lazy var definitions: [String: SVGElement] = {

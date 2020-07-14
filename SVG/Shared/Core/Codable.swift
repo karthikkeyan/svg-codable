@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias SVGElementCodable = SVGEncodable & SVGDecodable
+public typealias SVGCodable = SVGEncodable & SVGDecodable
 
 // MARK: - SVGDecodable
 
